@@ -39,16 +39,20 @@ function deepMerge<T extends Record<string, unknown>>(base: T, overrides: Partia
 
 const CONFIG_DIR_NAME = ".pi";
 
+const SETTINGS_FILE_NAME = "settings-extensions.json";
+
+type SettingsFile = Record<string, Record<string, unknown>>;
+
 /**
- * Load a single JSON config file. Returns empty object if file doesn't exist or is invalid.
+ * Load the settings file. Returns empty object if file doesn't exist or is invalid.
  */
-function loadConfigFile<T extends Record<string, unknown>>(path: string): Partial<T> {
+function loadSettingsFile(path: string): SettingsFile {
 	if (!existsSync(path)) {
 		return {};
 	}
 	try {
 		const content = readFileSync(path, "utf-8");
-		return JSON.parse(content) as Partial<T>;
+		return JSON.parse(content) as SettingsFile;
 	} catch {
 		return {};
 	}
@@ -58,10 +62,18 @@ function loadConfigFile<T extends Record<string, unknown>>(path: string): Partia
  * Load extension config from global and project locations, with project taking precedence.
  *
  * Config file locations:
- * - Global: ~/.pi/agent/<name>.json
- * - Project: <cwd>/.pi/<name>.json
+ * - Global: ~/.pi/agent/settings-extensions.json
+ * - Project: <cwd>/.pi/settings-extensions.json
  *
- * @param name - Extension name (used as filename without .json)
+ * Each file contains a JSON object with extension names as keys:
+ * ```json
+ * {
+ *   "my-extension": { "timeout": 30 },
+ *   "another-extension": { "debug": true }
+ * }
+ * ```
+ *
+ * @param name - Extension name (used as key in the settings file)
  * @returns Merged config with project values taking precedence
  *
  * @example
@@ -75,11 +87,14 @@ function loadConfigFile<T extends Record<string, unknown>>(path: string): Partia
  * ```
  */
 export function loadConfig<T extends Record<string, unknown>>(name: string): T {
-	const globalPath = join(getAgentDir(), `${name}.json`);
-	const projectPath = join(process.cwd(), CONFIG_DIR_NAME, `${name}.json`);
+	const globalPath = join(getAgentDir(), SETTINGS_FILE_NAME);
+	const projectPath = join(process.cwd(), CONFIG_DIR_NAME, SETTINGS_FILE_NAME);
 
-	const globalConfig = loadConfigFile<T>(globalPath);
-	const projectConfig = loadConfigFile<T>(projectPath);
+	const globalSettings = loadSettingsFile(globalPath);
+	const projectSettings = loadSettingsFile(projectPath);
+
+	const globalConfig = (globalSettings[name] ?? {}) as Partial<T>;
+	const projectConfig = (projectSettings[name] ?? {}) as Partial<T>;
 
 	return deepMerge(globalConfig as T, projectConfig) as T;
 }

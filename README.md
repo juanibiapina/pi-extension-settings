@@ -27,8 +27,8 @@ export default function (pi: ExtensionAPI) {
   const config = loadConfig<MyExtensionConfig>("my-extension");
   
   // Users can now configure your extension via:
-  // - ~/.pi/agent/my-extension.json (global defaults)
-  // - <project>/.pi/my-extension.json (project overrides)
+  // - ~/.pi/agent/settings-extensions.json (global defaults)
+  // - <project>/.pi/settings-extensions.json (project overrides)
 }
 ```
 
@@ -38,8 +38,24 @@ Project config takes precedence. Nested objects are deep-merged.
 
 | Scope | Path |
 |-------|------|
-| Global | `~/.pi/agent/<name>.json` |
-| Project | `<cwd>/.pi/<name>.json` |
+| Global | `~/.pi/agent/settings-extensions.json` |
+| Project | `<cwd>/.pi/settings-extensions.json` |
+
+## Config File Format
+
+All extension settings are stored in a single file with one key per extension:
+
+```json
+{
+  "my-extension": {
+    "timeout": 30,
+    "debug": true
+  },
+  "another-extension": {
+    "apiKey": "xyz"
+  }
+}
+```
 
 ## License
 
