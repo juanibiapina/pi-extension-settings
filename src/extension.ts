@@ -19,7 +19,7 @@ export default function piLibExtension(pi: ExtensionAPI) {
 	const registry = new Map<string, SettingDefinition[]>();
 
 	// Listen for registration events from other extensions
-	pi.events.on("pi-lib:register", (data) => {
+	pi.events.on("pi-extension-settings:register", (data) => {
 		const { name, settings } = data as RegistrationPayload;
 		registry.set(name, settings);
 	});

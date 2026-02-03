@@ -1,4 +1,4 @@
-# @juanibiapina/pi-lib
+# @juanibiapina/pi-extension-settings
 
 A [pi](https://github.com/badlogic/pi-mono) extension that provides centralized settings management for all extensions.
 
@@ -8,39 +8,46 @@ A [pi](https://github.com/badlogic/pi-mono) extension that provides centralized 
 - **Helpers for reading/writing** - `getSetting()` and `setSetting()` functions
 - **Persistent storage** - Settings stored in `~/.pi/agent/settings-extensions.json`
 
-## Installation
+## For Users
+
+Install the extension to get the `/extension-settings` command, which provides an interactive UI to configure settings for all extensions that support it:
 
 ```bash
-pi install npm:@juanibiapina/pi-lib
+pi install npm:@juanibiapina/pi-extension-settings
 ```
 
-## Usage
+Then use `/extension-settings` in pi:
 
-### For Extension Authors
+- Settings are grouped by extension with headers
+- Use arrow keys to navigate
+- Press Enter or Space to cycle through values (or edit string inputs)
+- Type to search/filter settings
+- Press Escape to close
 
-To use pi-lib in your extension:
+## For Extension Authors
 
-1. **Add pi-lib as a dependency** in your extension's `package.json`:
-   ```json
-   {
-     "dependencies": {
-       "@juanibiapina/pi-lib": "^0.3.0"
-     }
-   }
-   ```
+If you're developing an extension and want to use the settings system, add this package as a dependency in your extension's `package.json`:
 
-2. **Emit the registration event** and use the helper functions as shown below.
+```json
+{
+  "dependencies": {
+    "@juanibiapina/pi-extension-settings": "^0.4.0"
+  }
+}
+```
 
-#### 1. Register Settings (for the UI)
+This gives you access to `getSetting()` and `setSetting()` helpers, and lets you register settings so they appear in the `/extension-settings` UI.
 
-Emit the `pi-lib:register` event during extension load to make your settings appear in `/extension-settings`:
+### Register Settings (for the UI)
+
+Emit the `pi-extension-settings:register` event during extension load to make your settings appear in `/extension-settings`:
 
 ```typescript
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import type { SettingDefinition } from "@juanibiapina/pi-lib";
+import type { SettingDefinition } from "@juanibiapina/pi-extension-settings";
 
 export default function myExtension(pi: ExtensionAPI) {
-  pi.events.emit("pi-lib:register", {
+  pi.events.emit("pi-extension-settings:register", {
     name: "my-extension",
     settings: [
       {
@@ -69,12 +76,12 @@ export default function myExtension(pi: ExtensionAPI) {
 }
 ```
 
-#### 2. Read/Write Settings
+### Read/Write Settings
 
 Use the helper functions to read and write settings:
 
 ```typescript
-import { getSetting, setSetting } from "@juanibiapina/pi-lib";
+import { getSetting, setSetting } from "@juanibiapina/pi-extension-settings";
 
 // Read a setting (with default fallback - must match defaultValue from registration)
 const timeout = getSetting("my-extension", "timeout", "30");
@@ -82,16 +89,6 @@ const timeout = getSetting("my-extension", "timeout", "30");
 // Write a setting
 setSetting("my-extension", "debug", "on");
 ```
-
-### For Users
-
-Use the `/extension-settings` command to configure all registered extension settings through an interactive UI:
-
-- Settings are grouped by extension with headers
-- Use arrow keys to navigate
-- Press Enter or Space to cycle through values (or edit string inputs)
-- Type to search/filter settings
-- Press Escape to close
 
 ## API Reference
 
@@ -125,12 +122,12 @@ interface SettingDefinition {
 }
 ```
 
-### Event: `pi-lib:register`
+### Event: `pi-extension-settings:register`
 
 Emit this event to register settings for the UI:
 
 ```typescript
-pi.events.emit("pi-lib:register", {
+pi.events.emit("pi-extension-settings:register", {
   name: string;                    // Extension name
   settings: SettingDefinition[];   // Array of setting definitions
 });

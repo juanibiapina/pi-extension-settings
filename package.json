@@ -1,6 +1,6 @@
 {
-	"name": "@juanibiapina/pi-lib",
-	"version": "0.3.0",
+	"name": "@juanibiapina/pi-extension-settings",
+	"version": "0.4.0",
 	"description": "Pi extension for centralized settings management across extensions",
 	"type": "module",
 	"main": "dist/index.js",
@@ -31,7 +31,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+ssh://git@github.com/juanibiapina/pi-lib.git"
+		"url": "git+ssh://git@github.com/juanibiapina/pi-extension-settings.git"
 	},
 	"engines": {
 		"node": ">=20.0.0"

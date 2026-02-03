@@ -8,13 +8,13 @@
  *
  * ### Register Settings (for the UI)
  *
- * Emit the `pi-lib:register` event during extension load:
+ * Emit the `pi-extension-settings:register` event during extension load:
  *
  * ```typescript
- * import type { SettingDefinition } from "@juanibiapina/pi-lib";
+ * import type { SettingDefinition } from "@juanibiapina/pi-extension-settings";
  *
  * export default function(pi: ExtensionAPI) {
- *   pi.events.emit("pi-lib:register", {
+ *   pi.events.emit("pi-extension-settings:register", {
  *     name: "my-extension",
  *     settings: [
  *       { id: "timeout", label: "Timeout", defaultValue: "30", values: ["10", "30", "60"] },
@@ -27,7 +27,7 @@
  * ### Read/Write Settings
  *
  * ```typescript
- * import { getSetting, setSetting } from "@juanibiapina/pi-lib";
+ * import { getSetting, setSetting } from "@juanibiapina/pi-extension-settings";
  *
  * const timeout = getSetting("my-extension", "timeout", "30");
  * setSetting("my-extension", "timeout", "60");
