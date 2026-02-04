@@ -40,6 +40,9 @@
 		"@mariozechner/pi-coding-agent": "*",
 		"@mariozechner/pi-tui": "*"
 	},
+	"dependencies": {
+		"@standard-schema/spec": "^1.0.0"
+	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.5",
 		"@mariozechner/pi-coding-agent": "^0.51.1",

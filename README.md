@@ -90,6 +90,33 @@ const timeout = getSetting("my-extension", "timeout", "30");
 setSetting("my-extension", "debug", "on");
 ```
 
+### Typed Settings Store (Standard Schema)
+
+If you want type-safe settings with validation/coercion, create a Standard Schema (for example with ArkType) and use the typed store factory:
+
+```typescript
+import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { type } from "arktype";
+import { createSettingsStoreFactory } from "@juanibiapina/pi-extension-settings";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
+
+const SettingsSchema = type({
+  debug: "'on' | 'off' | 'verbose'",
+  timeout: "number?",
+}) satisfies StandardSchemaV1;
+
+const createStore = createSettingsStoreFactory("my-extension", SettingsSchema);
+
+export default async function myExtension(pi: ExtensionAPI) {
+  const store = createStore(pi);
+  const debugLevel = await store.get("debug", "off");
+  const timeout = await store.get("timeout");
+  await store.getAll({ debug: "off" });
+}
+```
+
+The factory validates string-backed storage through the schema and registers settings for the UI using the schema's input JSON Schema (title/description/default/enum).
+
 ## API Reference
 
 ### `getSetting(extensionName, settingId, defaultValue?)`
@@ -106,6 +133,35 @@ Set a setting value. Writes to `~/.pi/agent/settings-extensions.json`.
 
 ```typescript
 setSetting("my-extension", "debug", "on");
+```
+
+### `getSettingsForExtension(extensionName)`
+
+Load all stored settings (string-backed) for a single extension.
+
+```typescript
+const rawSettings = getSettingsForExtension("my-extension");
+```
+
+### `createSettingsStoreFactory(extensionName, schema)`
+
+Create a factory for typed settings stores backed by Standard Schema validation.
+
+```typescript
+const createStore = createSettingsStoreFactory("my-extension", SettingsSchema);
+const store = createStore(pi);
+```
+
+### `TypedSettingsStore` (type)
+
+Typed store API returned by `createSettingsStoreFactory`:
+
+```typescript
+interface TypedSettingsStore<Output> {
+  get<K extends keyof Output>(key: K, fallback?: Output[K]): Promise<Output[K] | undefined>;
+  set<K extends keyof Output>(key: K, value: Output[K]): void;
+  getAll(fallbacks?: Partial<Output>): Promise<Output>;
+}
 ```
 
 ### `SettingDefinition` (type)
