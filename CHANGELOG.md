@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Extension headers are no longer editable in the settings UI
+
 ## 0.3.0
 
 ### Added
