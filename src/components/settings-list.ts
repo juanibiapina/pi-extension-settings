@@ -30,6 +30,8 @@ export interface SettingItem {
 	values?: string[];
 	/** If provided, Enter opens this submenu. Receives current value and done callback. */
 	submenu?: (currentValue: string, done: (selectedValue?: string) => void) => Component;
+	/** If false, item is selectable but cannot be edited or changed. */
+	editable?: boolean;
 }
 
 export interface SettingsListTheme {
@@ -269,6 +271,10 @@ export class SettingsList implements Component {
 		const displayItems = this.searchEnabled ? this.filteredItems : this.items;
 		const item = displayItems[this.selectedIndex];
 		if (!item) return;
+
+		if (item.editable === false) {
+			return;
+		}
 
 		if (item.submenu) {
 			// Open submenu, passing current value so it can pre-select correctly

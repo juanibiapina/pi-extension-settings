@@ -51,6 +51,7 @@ export default function piLibExtension(pi: ExtensionAPI) {
 						label: theme.bold(extName),
 						currentValue: "",
 						values: undefined, // No cycling - acts as header
+						editable: false,
 					});
 
 					// Add each setting
