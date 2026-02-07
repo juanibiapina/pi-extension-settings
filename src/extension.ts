@@ -28,7 +28,10 @@ export default function piLibExtension(pi: ExtensionAPI) {
 		description: "Configure settings for all extensions",
 		handler: async (_args, ctx) => {
 			if (registry.size === 0) {
-				ctx.ui.notify("No extensions have registered settings", "info");
+				ctx.ui.notify(
+					"No extensions have registered settings. Ensure pi-extension-settings is listed before consumer extensions in your packages array in ~/.pi/settings.json.",
+					"info",
+				);
 				return;
 			}
 

@@ -16,6 +16,8 @@ Install the extension to get the `/extension-settings` command, which provides a
 pi install npm:@juanibiapina/pi-extension-settings
 ```
 
+> **⚠️ Load Order:** `pi-extension-settings` must appear **before** any extension that registers settings in your `packages` array in `~/.pi/settings.json`. Extensions register via the event bus at load time, so if `pi-extension-settings` hasn't loaded yet, those registrations are silently lost.
+
 Then use `/extension-settings` in pi:
 
 - Settings are grouped by extension with headers
