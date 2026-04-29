@@ -4,10 +4,11 @@ A [pi](https://github.com/badlogic/pi-mono) extension that provides centralized 
 
 ## Features
 
-- **`/extension-settings` command** - Interactive UI to configure all registered extension settings
+- **`/extension-settings` command** - Interactive UI to configure global extension settings
+- **`/extension-settings-local` command** - Interactive UI to configure per-project/folder settings
 - **Helpers for reading/writing** - `getSetting()` and `setSetting()` functions
 - **Ordered multi-select** - Settings where users pick and reorder items from a list
-- **Persistent storage** - Settings stored in `~/.pi/agent/settings-extensions.json`
+- **Persistent storage** - Global settings stored in `~/.pi/agent/settings-extensions.json`; local settings stored in `.pi/settings-extensions.json`
 
 ## For Users
 
@@ -19,7 +20,7 @@ pi install npm:@juanibiapina/pi-extension-settings
 
 > **⚠️ Load Order:** `pi-extension-settings` must appear **before** any extension that registers settings in your `packages` array in `~/.pi/settings.json`. Extensions register via the event bus at load time, so if `pi-extension-settings` hasn't loaded yet, those registrations are silently lost.
 
-Then use `/extension-settings` in pi:
+Then use `/extension-settings` in pi to edit global settings, or `/extension-settings-local` to edit settings for the current project/folder:
 
 - Settings are grouped by extension with headers
 - Use arrow keys to navigate
@@ -98,29 +99,34 @@ Use the helper functions to read and write settings:
 ```typescript
 import { getSetting, setSetting } from "@juanibiapina/pi-extension-settings";
 
-// Read a setting (with default fallback - must match defaultValue from registration)
+// Read a setting. Local settings override global settings by default, then the default is used.
 const timeout = getSetting("my-extension", "timeout", "30");
 
-// Write a setting
+// Write a global setting
 setSetting("my-extension", "debug", "on");
+
+// Write a local setting to .pi/settings-extensions.json in the current folder
+setSetting("my-extension", "debug", "on", { scope: "local" });
 ```
 
 ## API Reference
 
-### `getSetting(extensionName, settingId, defaultValue?)`
+### `getSetting(extensionName, settingId, defaultValue?, options?)`
 
-Get a setting value. Returns the stored value, or the provided default, or `undefined`.
+Get a setting value. By default, checks local project/folder settings first, then global settings, then the provided default.
 
 ```typescript
 const value = getSetting("my-extension", "timeout", "30");
+const globalOnly = getSetting("my-extension", "timeout", "30", { scope: "global" });
 ```
 
-### `setSetting(extensionName, settingId, value)`
+### `setSetting(extensionName, settingId, value, options?)`
 
-Set a setting value. Writes to `~/.pi/agent/settings-extensions.json`.
+Set a setting value. Writes to `~/.pi/agent/settings-extensions.json` by default, or `.pi/settings-extensions.json` when `options.scope` is `"local"`.
 
 ```typescript
 setSetting("my-extension", "debug", "on");
+setSetting("my-extension", "debug", "on", { scope: "local" });
 ```
 
 ### `SettingDefinition` (type)
@@ -158,7 +164,7 @@ pi.events.emit("pi-extension-settings:register", {
 
 ## Storage
 
-Settings are stored in `~/.pi/agent/settings-extensions.json`:
+Global settings are stored in `~/.pi/agent/settings-extensions.json`. Local project/folder settings are stored in `.pi/settings-extensions.json` and override global settings when reading by default:
 
 ```json
 {
