@@ -7,6 +7,7 @@ import { getSettingsListTheme } from "@mariozechner/pi-coding-agent";
 import { Container, Text } from "@mariozechner/pi-tui";
 import { OrderedMultiSelect } from "./components/ordered-multi-select.js";
 import { type SettingItem, SettingsList } from "./components/settings-list.js";
+import { initI18n, t } from "./i18n.js";
 import { getSetting, setSetting } from "./settings/storage.js";
 import type { SettingDefinition } from "./settings/types.js";
 
@@ -16,6 +17,8 @@ interface RegistrationPayload {
 }
 
 export default function piLibExtension(pi: ExtensionAPI) {
+	initI18n(pi);
+
 	// Local registry - stores settings registered via events
 	const registry = new Map<string, SettingDefinition[]>();
 
@@ -30,7 +33,10 @@ export default function piLibExtension(pi: ExtensionAPI) {
 		handler: async (_args, ctx) => {
 			if (registry.size === 0) {
 				ctx.ui.notify(
-					"No extensions have registered settings. Ensure pi-extension-settings is listed before consumer extensions in your packages array in ~/.pi/settings.json.",
+					t(
+						"settings.noneRegistered",
+						"No extensions have registered settings. Ensure pi-extension-settings is listed before consumer extensions in your packages array in ~/.pi/settings.json.",
+					),
 					"info",
 				);
 				return;
@@ -43,7 +49,7 @@ export default function piLibExtension(pi: ExtensionAPI) {
 				const container = new Container();
 
 				// Title
-				container.addChild(new Text(theme.fg("accent", theme.bold("Extension Settings")), 1, 1));
+				container.addChild(new Text(theme.fg("accent", theme.bold(t("settings.title", "Extension Settings"))), 1, 1));
 
 				// Build items grouped by extension
 				const items: SettingItem[] = [];

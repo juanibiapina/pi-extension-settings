@@ -13,6 +13,7 @@ import {
 	visibleWidth,
 	wrapTextWithAnsi,
 } from "@mariozechner/pi-tui";
+import { t } from "../i18n.js";
 
 export interface SettingItem {
 	/** Unique identifier for this setting */
@@ -115,7 +116,7 @@ export class SettingsList implements Component {
 		}
 
 		if (this.items.length === 0) {
-			lines.push(this.theme.hint("  No settings available"));
+			lines.push(this.theme.hint(`  ${t("settings.noneAvailable", "No settings available")}`));
 			if (this.searchEnabled) {
 				this.addHintLine(lines);
 			}
@@ -124,7 +125,7 @@ export class SettingsList implements Component {
 
 		const displayItems = this.searchEnabled ? this.filteredItems : this.items;
 		if (displayItems.length === 0) {
-			lines.push(this.theme.hint("  No matching settings"));
+			lines.push(this.theme.hint(`  ${t("settings.noneMatching", "No matching settings")}`));
 			this.addHintLine(lines);
 			return lines;
 		}
@@ -318,11 +319,13 @@ export class SettingsList implements Component {
 	private addHintLine(lines: string[]): void {
 		lines.push("");
 		if (this.editingInput) {
-			lines.push(this.theme.hint("  Enter to confirm · Esc to cancel"));
+			lines.push(this.theme.hint(`  ${t("settings.hint.editing", "Enter to confirm · Esc to cancel")}`));
 		} else if (this.searchEnabled) {
-			lines.push(this.theme.hint("  Type to search · Enter/Space to change · Esc to cancel"));
+			lines.push(
+				this.theme.hint(`  ${t("settings.hint.search", "Type to search · Enter/Space to change · Esc to cancel")}`),
+			);
 		} else {
-			lines.push(this.theme.hint("  Enter/Space to change · Esc to cancel"));
+			lines.push(this.theme.hint(`  ${t("settings.hint.default", "Enter/Space to change · Esc to cancel")}`));
 		}
 	}
 }
