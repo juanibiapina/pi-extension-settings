@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Migrated from `@mariozechner/pi-coding-agent` and `@mariozechner/pi-tui` to `@earendil-works/pi-coding-agent` and `@earendil-works/pi-tui`
+
 ## [0.6.0] - 2026-03-23
 
 ### Changed

@@ -6,7 +6,7 @@
  * Value is stored as a comma-separated string of selected IDs in order.
  */
 
-import { type Component, getKeybindings, matchesKey, truncateToWidth } from "@mariozechner/pi-tui";
+import { type Component, getKeybindings, matchesKey, truncateToWidth } from "@earendil-works/pi-tui";
 import type { OrderedListOption } from "../settings/types.js";
 import type { SettingsListTheme } from "./settings-list.js";
 

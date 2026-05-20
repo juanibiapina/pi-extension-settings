@@ -2,9 +2,9 @@
  * Pi extension that provides /extension-settings command.
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { getSettingsListTheme } from "@mariozechner/pi-coding-agent";
-import { Container, Text } from "@mariozechner/pi-tui";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { getSettingsListTheme } from "@earendil-works/pi-coding-agent";
+import { Container, Text } from "@earendil-works/pi-tui";
 import { OrderedMultiSelect } from "./components/ordered-multi-select.js";
 import { type SettingItem, SettingsList } from "./components/settings-list.js";
 import { getSetting, setSetting } from "./settings/storage.js";

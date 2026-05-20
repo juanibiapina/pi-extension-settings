@@ -39,12 +39,12 @@
     "node": ">=20.0.0"
   },
   "peerDependencies": {
-    "@mariozechner/pi-coding-agent": "*",
-    "@mariozechner/pi-tui": "*"
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.15",
-    "@mariozechner/pi-coding-agent": "^0.73.1",
+    "@earendil-works/pi-coding-agent": "^0.75.3",
     "@types/node": "^25.5.0",
     "tsx": "^4.20.3",
     "typescript": "^6.0.2"

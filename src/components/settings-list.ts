@@ -1,6 +1,6 @@
 /**
  * Settings list component with support for cycling values and string input.
- * Based on @mariozechner/pi-tui SettingsList, extended with string editing.
+ * Based on @earendil-works/pi-tui SettingsList, extended with string editing.
  */
 
 import {
@@ -12,7 +12,7 @@ import {
 	truncateToWidth,
 	visibleWidth,
 	wrapTextWithAnsi,
-} from "@mariozechner/pi-tui";
+} from "@earendil-works/pi-tui";
 
 export interface SettingItem {
 	/** Unique identifier for this setting */
