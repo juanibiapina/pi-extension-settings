@@ -25,101 +25,112 @@ export default function piLibExtension(pi: ExtensionAPI) {
 		registry.set(name, settings);
 	});
 
-	pi.registerCommand("extension-settings", {
-		description: "Configure settings for all extensions",
-		handler: async (_args, ctx) => {
-			if (registry.size === 0) {
-				ctx.ui.notify(
-					"No extensions have registered settings. Ensure pi-extension-settings is listed before consumer extensions in your packages array in ~/.pi/settings.json.",
-					"info",
-				);
-				return;
-			}
-
-			// Sort extensions by name
-			const sortedExtensions = Array.from(registry.entries()).sort(([a], [b]) => a.localeCompare(b));
-
-			await ctx.ui.custom((tui, theme, _kb, done) => {
-				const container = new Container();
-
-				// Title
-				container.addChild(new Text(theme.fg("accent", theme.bold("Extension Settings")), 1, 1));
-
-				// Build items grouped by extension
-				const items: SettingItem[] = [];
-
-				for (const [extName, settings] of sortedExtensions) {
-					// Add extension header as a non-interactive item
-					items.push({
-						id: `__header__${extName}`,
-						label: theme.bold(extName),
-						currentValue: "",
-						values: undefined, // No cycling - acts as header
-						editable: false,
-					});
-
-					// Add each setting
-					for (const setting of settings) {
-						const currentValue = getSetting(extName, setting.id, setting.defaultValue) ?? setting.defaultValue;
-
-						if (setting.options && setting.options.length > 0) {
-							// Ordered multi-select: opens a submenu
-							items.push({
-								id: `${extName}::${setting.id}`,
-								label: `  ${setting.label}`,
-								description: setting.description,
-								currentValue,
-								submenu: (val, submenuDone) => {
-									return new OrderedMultiSelect(setting.options!, val, getSettingsListTheme(), submenuDone);
-								},
-							});
-						} else {
-							items.push({
-								id: `${extName}::${setting.id}`,
-								label: `  ${setting.label}`,
-								description: setting.description,
-								currentValue,
-								values: setting.values,
-							});
-						}
-					}
+	function registerSettingsCommand(command: string, description: string, scope: "global" | "local") {
+		pi.registerCommand(command, {
+			description,
+			handler: async (_args, ctx) => {
+				if (registry.size === 0) {
+					ctx.ui.notify(
+						"No extensions have registered settings. Ensure pi-extension-settings is listed before consumer extensions in your packages array in ~/.pi/settings.json.",
+						"info",
+					);
+					return;
 				}
 
-				const settingsList = new SettingsList(
-					items,
-					Math.min(items.length + 2, 20),
-					getSettingsListTheme(),
-					(id, newValue) => {
-						// Skip headers
-						if (id.startsWith("__header__")) return;
+				// Sort extensions by name
+				const sortedExtensions = Array.from(registry.entries()).sort(([a], [b]) => a.localeCompare(b));
 
-						// Parse extension::settingId
-						const [extensionName, settingId] = id.split("::");
-						if (extensionName && settingId) {
-							setSetting(extensionName, settingId, newValue);
+				await ctx.ui.custom((tui, theme, _kb, done) => {
+					const container = new Container();
+
+					// Title
+					const title = scope === "local" ? "Local Extension Settings" : "Extension Settings";
+					container.addChild(new Text(theme.fg("accent", theme.bold(title)), 1, 1));
+
+					// Build items grouped by extension
+					const items: SettingItem[] = [];
+
+					for (const [extName, settings] of sortedExtensions) {
+						// Add extension header as a non-interactive item
+						items.push({
+							id: `__header__${extName}`,
+							label: theme.bold(extName),
+							currentValue: "",
+							values: undefined, // No cycling - acts as header
+							editable: false,
+						});
+
+						// Add each setting
+						for (const setting of settings) {
+							const currentValue =
+								getSetting(extName, setting.id, setting.defaultValue, { scope }) ?? setting.defaultValue;
+
+							if (setting.options && setting.options.length > 0) {
+								// Ordered multi-select: opens a submenu
+								items.push({
+									id: `${extName}::${setting.id}`,
+									label: `  ${setting.label}`,
+									description: setting.description,
+									currentValue,
+									submenu: (val, submenuDone) => {
+										return new OrderedMultiSelect(setting.options!, val, getSettingsListTheme(), submenuDone);
+									},
+								});
+							} else {
+								items.push({
+									id: `${extName}::${setting.id}`,
+									label: `  ${setting.label}`,
+									description: setting.description,
+									currentValue,
+									values: setting.values,
+								});
+							}
 						}
-					},
-					() => {
-						done(undefined);
-					},
-					{ enableSearch: true },
-				);
+					}
 
-				container.addChild(settingsList);
+					const settingsList = new SettingsList(
+						items,
+						Math.min(items.length + 2, 20),
+						getSettingsListTheme(),
+						(id, newValue) => {
+							// Skip headers
+							if (id.startsWith("__header__")) return;
 
-				return {
-					render(width: number) {
-						return container.render(width);
-					},
-					invalidate() {
-						container.invalidate();
-					},
-					handleInput(data: string) {
-						settingsList.handleInput?.(data);
-						tui.requestRender();
-					},
-				};
-			});
-		},
-	});
+							// Parse extension::settingId
+							const [extensionName, settingId] = id.split("::");
+							if (extensionName && settingId) {
+								setSetting(extensionName, settingId, newValue, { scope });
+							}
+						},
+						() => {
+							done(undefined);
+						},
+						{ enableSearch: true },
+					);
+
+					container.addChild(settingsList);
+
+					return {
+						render(width: number) {
+							return container.render(width);
+						},
+						invalidate() {
+							container.invalidate();
+						},
+						handleInput(data: string) {
+							settingsList.handleInput?.(data);
+							tui.requestRender();
+						},
+					};
+				});
+			},
+		});
+	}
+
+	registerSettingsCommand("extension-settings", "Configure global settings for all extensions", "global");
+	registerSettingsCommand(
+		"extension-settings-local",
+		"Configure local settings for all extensions in this folder",
+		"local",
+	);
 }
