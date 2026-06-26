@@ -33,9 +33,9 @@
     "node": ">=20.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.0",
-    "@earendil-works/pi-coding-agent": "^0.79.1",
-    "@types/node": "^25.9.1",
+    "@biomejs/biome": "2.5.1",
+    "@earendil-works/pi-coding-agent": "^0.80.2",
+    "@types/node": "^26.0.1",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   }
