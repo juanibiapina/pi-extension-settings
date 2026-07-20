@@ -23,6 +23,10 @@
       "./src/index.ts"
     ]
   },
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "author": "Juan Ibiapina",
   "license": "MIT",
   "repository": {
