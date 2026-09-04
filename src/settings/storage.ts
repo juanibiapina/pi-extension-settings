@@ -67,8 +67,22 @@ function saveSettingsFile(path: string, settings: SettingsFile): void {
  * @param settingId - Setting ID within the extension
  * @param defaultValue - Default value if setting is not found
  * @param options - Storage scope options
- * @returns The setting value
+ * @returns The setting value. Returns a `string` when a string `defaultValue` is
+ *   provided (the default is returned when the setting is absent), otherwise
+ *   `string | undefined`.
  */
+export function getSetting(
+	extensionName: string,
+	settingId: string,
+	defaultValue: string,
+	options?: SettingStorageOptions,
+): string;
+export function getSetting(
+	extensionName: string,
+	settingId: string,
+	defaultValue?: string,
+	options?: SettingStorageOptions,
+): string | undefined;
 export function getSetting(
 	extensionName: string,
 	settingId: string,

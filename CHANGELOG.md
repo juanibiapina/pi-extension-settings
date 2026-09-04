@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `getSetting` now returns a plain `string` when you pass a default value, so reads no longer need a `?? fallback` under TypeScript strict mode
+
 ### Fixed
 
 - Ship TypeScript declaration files so extensions can import the library under TypeScript strict mode without writing their own type definitions

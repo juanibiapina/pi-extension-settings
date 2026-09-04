@@ -46,4 +46,16 @@ describe("local settings scope", () => {
 
 		assert.equal(getSetting("my-extension", "debug", "default", { scope: "global", cwd, agentDir }), "off");
 	});
+
+	it("returns the string default when the setting is absent", () => {
+		const { agentDir, cwd } = makeDirs();
+
+		// With a string default, the return type narrows to `string` (checked by tsc).
+		const value: string = getSetting("my-extension", "missing", "fallback", { cwd, agentDir });
+		assert.equal(value, "fallback");
+
+		// Without a default, the return type stays `string | undefined`.
+		const maybe: string | undefined = getSetting("my-extension", "missing", undefined, { cwd, agentDir });
+		assert.equal(maybe, undefined);
+	});
 });
