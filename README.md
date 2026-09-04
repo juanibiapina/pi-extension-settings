@@ -47,7 +47,7 @@ This gives you access to `getSetting()` and `setSetting()` helpers, and lets you
 Emit the `pi-extension-settings:register` event during extension load to make your settings appear in `/extension-settings`:
 
 ```typescript
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { SettingDefinition } from "@juanibiapina/pi-extension-settings";
 
 export default function myExtension(pi: ExtensionAPI) {

@@ -4,11 +4,14 @@
   "description": "Pi extension for centralized settings management across extensions",
   "type": "module",
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "check": "biome check --write --error-on-warnings . && tsc --noEmit",
-    "test": "node --test --import tsx test/*.test.ts"
+    "test": "node --test --import tsx test/*.test.ts",
+    "prepack": "npm run build"
   },
   "files": [
     "src/**/*",
+    "dist/**/*",
     "README.md"
   ],
   "keywords": [
@@ -24,8 +27,12 @@
     ]
   },
   "main": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
   },
   "author": "Juan Ibiapina",
   "license": "MIT",
@@ -35,6 +42,10 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.10",
